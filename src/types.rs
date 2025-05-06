@@ -577,6 +577,9 @@ bitops_for_big!(8);
 pub trait Bits {
     /// The number of bits
     const VALUE: usize;
+    /// The default value. Workaround for `const fn new() -> Self`.
+    const DEFAULT: Self::Store;
+
     /// A primitive integer type suitable for storing this many bits.
     type Store: BitOps + Default + Copy + PartialEq + Debug;
 
@@ -640,6 +643,7 @@ pub struct BitsImpl<const N: usize>;
 
 impl Bits for BitsImpl<1> {
     const VALUE: usize = 1;
+    const DEFAULT: Self::Store = false;
     type Store = bool;
 }
 
@@ -647,6 +651,7 @@ macro_rules! bits_for {
     ($num:expr, $result:ty) => {
         impl Bits for BitsImpl<$num> {
             const VALUE: usize = $num;
+            const DEFAULT: Self::Store = 0;
             type Store = $result;
         }
     };
@@ -656,6 +661,7 @@ macro_rules! bits_for_big {
     ($num:expr, $words:expr) => {
         impl Bits for BitsImpl<$num> {
             const VALUE: usize = $num;
+            const DEFAULT: Self::Store = [0; $words];
             type Store = [u128; $words];
         }
     };

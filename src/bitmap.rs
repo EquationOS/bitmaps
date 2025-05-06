@@ -166,8 +166,10 @@ where
 {
     /// Construct a bitmap with every bit set to `false`.
     #[inline]
-    pub fn new() -> Self {
-        Self::default()
+    pub const fn new() -> Self {
+        Self {
+            data: <BitsImpl<SIZE> as Bits>::DEFAULT,
+        }
     }
 
     /// Construct a bitmap where every bit with index less than `bits` is
